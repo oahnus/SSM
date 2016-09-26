@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:mcv="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+    <context:annotation-config></context:annotation-config>
+
+    <context:component-scan base-package="cn.edu.just.controller">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+    </context:component-scan>
+
+    <!--<bean class="cn.edu.just.errorhandler.BaseGlobalExceptionHandler"></bean>-->
+
+    <mvc:view-controller path="/404" view-name="404"/>
+    <!--<mvc:view-controller path="/400" view-name="400"/>-->
+    <!--<mvc:view-controller path="/500" view-name="500"/>-->
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/static/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <mvc:default-servlet-handler />
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="102400000"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+    <!--不加这一句在下面配置静态资源后，通过浏览器无法访问到jsp页面-->
+    <mvc:annotation-driven/>
+
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="cn.edu.just.interceptor.AuthInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="cn.edu.just.interceptor.XSSInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--配置静态资源处理-->
+    <mvc:resources mapping="/upload/**" location="/WEB-INF/upload/"/>
+    <mvc:resources mapping="/static/**" location="/WEB-INF/static/"/>
+    <mvc:resources mapping="/resource/**" location="/resource/"/>
+
+</beans>

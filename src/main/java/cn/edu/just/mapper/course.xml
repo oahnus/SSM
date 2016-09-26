@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 用包名接口名作namespace的名称 -->
+<mapper namespace="cn.edu.just.dao.ICourseDao">
+    <!--添加课程 课程附件保存为附件在服务器上的下载地址，在完成接收文件后通过update指定-->
+    <insert id="insertCourse" parameterType="cn.edu.just.pojo.Course" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO course (name,profession,teacher,company,memo)
+        VALUES (#{name},#{profession},#{teacher},#{company},#{memo})
+    </insert>
+
+    <!--修改上传附件地址-->
+    <update id="updateAdditionUrl" parameterType="java.util.Map">
+        UPDATE course SET addition = #{url} WHERE id = #{id}
+    </update>
+
+    <!--检索，将学生，教师，公司获取课程sql分离成三条-->
+    <!--检索课程 新,教师只能获取本人教授的课程，学生只能获取本专业的课程，公司只能获取本公司的课程，管理员能够获取全部-->
+    <select id="teacherGetCourses" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Course">
+        SELECT a.id,a.name,a.profession,b.name teacherName,a.company,a.memo,a.addition
+        FROM course a,teacher b WHERE a.teacher = #{username}
+        AND b.workerId = a.teacher
+        <if test="courseName!=null and !&quot;&quot;.equals(courseName.trim())">
+            AND a.name = #{courseName}
+        </if>
+        <if test="companyName!=null and !&quot;&quot;.equals(companyName.trim())">
+            AND a.company = #{companyName}
+        </if>
+        <if test="teacherName!=null and !&quot;&quot;.equals(teacherName.trim())">
+            AND b.name = #{teacherName}
+        </if>
+        GROUP BY a.id;
+    </select>
+
+    <!--//TODO studentID-->
+    <select id="studentGetCourses" resultType="cn.edu.just.pojo.Course" parameterType="java.util.Map">
+        SELECT a.id,a.name,a.profession,a.company,a.memo,a.addition,
+        b.name teacherName
+        FROM course a,teacher b,student c
+        WHERE c.studentId = #{username}
+        AND b.workerId = a.teacher
+        AND a.profession LIKE concat('%',c.profession,'%')
+        <if test="courseName!=null and !&quot;&quot;.equals(courseName.trim())">
+            AND a.name = #{courseName}
+        </if>
+        <if test="companyName!=null and !&quot;&quot;.equals(companyName.trim())">
+            AND a.company = #{companyName}
+        </if>
+        <if test="teacherName!=null and !&quot;&quot;.equals(teacherName.trim())">
+            AND b.name = #{teacherName}
+        </if>
+        GROUP BY a.id;
+    </select>
+
+    <select id="companyGetCourses" resultType="cn.edu.just.pojo.Course" parameterType="java.util.Map">
+        SELECT a.id,a.name,a.profession,a.company,a.memo,a.addition,
+        b.name teacherName
+        FROM course a,teacher b
+        WHERE a.company = #{username}
+        AND b.workerId = a.teacher
+        <if test="courseName!=null and !&quot;&quot;.equals(courseName.trim())">
+            AND a.name = #{courseName}
+        </if>
+        <if test="companyName!=null and !&quot;&quot;.equals(companyName.trim())">
+            AND a.company = #{companyName}
+        </if>
+        <if test="teacherName!=null and !&quot;&quot;.equals(teacherName.trim())">
+            AND b.name = #{teacherName}
+        </if>
+        GROUP BY a.id;
+    </select>
+    <!---->
+    
+    <!--批量删除-->
+    <delete id="deleteCourseBatch" parameterType="java.util.List">
+        DELETE FROM course WHERE id IN (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+
+    <!--通过课程名，教师，公司，专业检索课程是否存在-->
+    <select id="queryCourse" parameterType="cn.edu.just.pojo.Course" resultType="java.lang.Integer">
+        SELECT id FROM course
+        WHERE name = #{name}
+        AND profession = #{profession}
+        AND teacher = #{teacher}
+        AND company = #{company}
+    </select>
+
+    <select id="queryById" parameterType="java.lang.Integer" resultType="cn.edu.just.pojo.Course">
+        SELECT a.id,a.name,a.profession,a.company,a.memo,a.addition,
+        b.name teacherName
+        FROM course a,teacher b
+        WHERE a.id = #{_parameter} AND b.workerId = a.teacher
+    </select>
+</mapper>

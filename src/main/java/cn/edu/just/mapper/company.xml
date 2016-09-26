@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 用包名接口名作namespace的名称 -->
+<mapper namespace="cn.edu.just.dao.ICompanyDao">
+    <!--登陆验证-->
+    <select id="verifyUser" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Company">
+        SELECT id,name,contact,address FROM company WHERE name = #{username} and pwd = #{password}
+    </select>
+
+    <!--获取公司列表-->
+    <select id="getCompanyList" resultType="cn.edu.just.pojo.Company">
+        SELECT id,name,contact,address FROM company
+    </select>
+
+    <!--根据id检索数据-->
+    <select id="queryById" parameterType="java.lang.Integer" resultType="cn.edu.just.pojo.Company">
+        SELECT id,name,contact,address FROM company where id = #{_parameter}
+    </select>
+
+    <!--插入公司-->
+    <insert id="insertCompany" parameterType="cn.edu.just.pojo.Company" useGeneratedKeys="true" keyProperty="id">
+        REPLACE INTO company (name,contact,address,pwd) VALUES
+        (#{name},#{contact},#{address},#{pwd})
+    </insert>
+
+    <!--批量插入-->
+    <insert id="insertCompanyBatch" parameterType="java.util.List">
+        INSERT IGNORE INTO company (name,contact,address,pwd) VALUES
+        <foreach collection="list" item="item" separator="," index="index">
+            (#{item.name},#{item.contact},#{item.address},#{item.pwd})
+        </foreach>
+    </insert>
+
+    <!--根据id批量删除-->
+    <delete id="deleteCompanyBatch" parameterType="java.util.List">
+        DELETE FROM company WHERE id IN (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+
+    <!--修改密码-->
+    <update id="modifyPwd" parameterType="java.util.Map">
+        UPDATE company SET pwd = #{newPassword} WHERE name = #{username} and pwd = #{oldPassword}
+    </update>
+</mapper>

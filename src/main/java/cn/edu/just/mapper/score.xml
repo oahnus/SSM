@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 学生选课表SQL -->
+<mapper namespace="cn.edu.just.dao.IScoreDao">
+    <resultMap id="scoreMap" type="cn.edu.just.pojo.Score">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="courseId" jdbcType="INTEGER" property="courseId"/>
+        <result column="studentId" jdbcType="INTEGER" property="studentId"/>
+        <result column="teacherScore" jdbcType="FLOAT" property="teacherScore"/>
+        <result column="companyScore" jdbcType="FLOAT" property="companyScore"/>
+    </resultMap>
+
+    <!--插入数据-->
+    <!--//TODO studentID-->
+    <insert id="insertScore" parameterType="cn.edu.just.pojo.Score" useGeneratedKeys="true" keyProperty="id">
+      INSERT INTO score (courseId,studentId)
+      VALUES (#{courseId},#{studentId})
+    </insert>
+
+    <!--更新数据-->
+    <update id="updateScore" parameterType="cn.edu.just.pojo.Score">
+        UPDATE score
+        <set>
+            <if test="actor == 3">
+                teacherScore = #{score}
+            </if>
+            <if test="actor == 2">
+                companyScore = #{score}
+            </if>
+        </set>
+        WHERE courseId = #{courseId} AND studentId = #{studentId}
+    </update>
+
+    <!--根据课程id和学号删除分数-->
+    <!--//TODO studentID-->
+    <delete id="deleteScoreByCourseIdAndStudentId" parameterType="java.util.Map">
+        DELETE FROM score WHERE courseId = #{courseId} AND studentId = #{studentId}
+    </delete>
+
+    <!--根据id批量删除-->
+    <delete id="deleteScoreById" parameterType="java.util.List">
+        DELETE FROM score WHERE id IN (
+          <foreach collection="list" item="item" separator=",">
+              #{item}
+          </foreach>
+        )
+    </delete>
+
+    <!--检索数据-->
+    <!-- // TODO student-->
+    <select id="studentGetScoreList"  parameterType="java.lang.String" resultType="cn.edu.just.pojo.Score">
+        SELECT a.id,a.courseId,b.name courseName,
+            b.company companyName,c.name TeacherName,a.teacherScore,a.companyScore
+            FROM score a,course b,teacher c
+            WHERE b.id = a.courseId
+            AND c.workerId = b.teacher
+            AND a.studentId = #{username}
+            GROUP BY a.id
+    </select>
+    <select id="teacherGetScoreList" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Score">
+        SELECT a.id,a.courseId,b.name courseName,c.name companyName,
+        a.studentId studentId,d.name studentName,
+        a.teacherScore,a.companyScore
+        FROM score a,course b,company c,student d
+        WHERE a.courseId = b.id
+        AND a.studentId = d.studentId
+        AND b.teacher = #{username}
+        <if test="courseId!=null">
+            AND a.courseId = #{courseId}
+        </if>
+        GROUP BY a.id;
+
+    </select>
+    <select id="companyGetScoreList" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Score">
+        SELECT a.id,a.courseId,b.name courseName,c.name teacherName,
+        a.studentId studentId,d.name studentName,a.teacherScore,a.companyScore
+        FROM score a,course b,teacher c,student d
+        WHERE a.courseId = b.id
+        AND a.studentId = d.studentId
+        AND b.teacher = c.workerId
+        AND b.company = #{username}
+        <if test="courseId!=null">
+            AND a.courseId = #{courseId}
+        </if>
+        GROUP BY a.id
+    </select>
+
+
+    <select id="getScoreList" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Score">
+        <if test="actor == 4">
+            SELECT a.id,a.courseId,b.name courseName,
+            b.company companyName,c.name TeacherName,a.teacherScore,a.companyScore
+            FROM score a,course b,teacher c
+            WHERE b.id = a.courseId
+            AND c.workerId = b.teacher
+            AND a.studentId = #{username}
+            GROUP BY a.id
+        </if>
+        <if test="actor == 2">
+            SELECT a.id,a.courseId,b.name courseName,c.name teacherName,
+            a.studentId studentId,d.name studentName,a.teacherScore,a.companyScore
+            FROM score a,course b,teacher c,student d
+            WHERE a.courseId = b.id
+            AND a.studentId = d.studentId
+            AND b.teacher = c.workerId
+            AND b.company = #{username}
+            <if test="courseId!=null">
+                AND a.courseId = #{courseId}
+            </if>
+            GROUP BY a.id
+        </if>
+        <if test="actor == 3">
+            SELECT a.id,a.courseId,b.name courseName,c.name companyName,
+            a.studentId studentId,d.name studentName,
+            a.teacherScore,a.companyScore
+            FROM score a,course b,company c,student d
+            WHERE a.courseId = b.id
+            AND a.studentId = d.studentId
+            AND b.teacher = #{username}
+            <if test="courseId!=null">
+                AND a.courseId = #{courseId}
+            </if>
+            GROUP BY a.id;
+        </if>
+    </select>
+</mapper>
