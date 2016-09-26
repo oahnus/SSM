@@ -23,8 +23,6 @@ public class MD5Util {
     }
 
     public static String encode2hex(String source){
-        // 添加扰乱字符串  pwd
-        source = source.substring(0,source.length()/2)+"pwd"+source.substring(source.length()/2);
         byte[] bytes = encode2bytes(source);
 
         StringBuffer hexString = new StringBuffer();
