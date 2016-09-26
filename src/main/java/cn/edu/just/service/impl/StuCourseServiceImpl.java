@@ -66,7 +66,6 @@ public class StuCourseServiceImpl implements IStuCourseService{
 
     /**
      * 批量删除选课信息,传递id数组,在删除选课信息的同时,将学生在分数表中的数据一并删除
-     * //TODO 删除学生选课信息的同时，是否删除学生分数？课程完成后，久的选课信息是否删除
      * @param ids id array
      */
     @Override

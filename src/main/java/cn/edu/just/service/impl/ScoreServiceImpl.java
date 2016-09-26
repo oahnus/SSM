@@ -44,7 +44,6 @@ public class ScoreServiceImpl implements IScoreService {
      */
     @Override
     public void deleteScoreByCourseIdAndStudentId(Integer courseId,String studentId) {
-        //TODO 同时删除学生在选课表中的记录和评分表中的记录？
         Map<String,Object> map = new HashMap<>();
         map.put("courseId",courseId);
         map.put("studentId",studentId);

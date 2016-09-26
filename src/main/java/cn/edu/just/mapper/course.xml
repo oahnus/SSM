@@ -33,7 +33,6 @@
         GROUP BY a.id;
     </select>
 
-    <!--//TODO studentID-->
     <select id="studentGetCourses" resultType="cn.edu.just.pojo.Course" parameterType="java.util.Map">
         SELECT a.id,a.name,a.profession,a.company,a.memo,a.addition,
         b.name teacherName

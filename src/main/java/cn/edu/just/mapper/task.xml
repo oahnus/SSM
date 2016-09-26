@@ -29,7 +29,6 @@
     </delete>
 
     <!--更新任务内容的下载地址-->
-    <!--// TODO 改成map传参，把空判断？-->
     <update id="updateTask" parameterType="cn.edu.just.pojo.Task">
         UPDATE task
         <set>

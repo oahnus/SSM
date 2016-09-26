@@ -13,7 +13,6 @@
     </resultMap>
 
     <!--插入数据-->
-    <!--//TODO studentID-->
     <insert id="insertScore" parameterType="cn.edu.just.pojo.Score" useGeneratedKeys="true" keyProperty="id">
       INSERT INTO score (courseId,studentId)
       VALUES (#{courseId},#{studentId})
@@ -34,7 +33,6 @@
     </update>
 
     <!--根据课程id和学号删除分数-->
-    <!--//TODO studentID-->
     <delete id="deleteScoreByCourseIdAndStudentId" parameterType="java.util.Map">
         DELETE FROM score WHERE courseId = #{courseId} AND studentId = #{studentId}
     </delete>
@@ -49,7 +47,6 @@
     </delete>
 
     <!--检索数据-->
-    <!-- // TODO student-->
     <select id="studentGetScoreList"  parameterType="java.lang.String" resultType="cn.edu.just.pojo.Score">
         SELECT a.id,a.courseId,b.name courseName,
             b.company companyName,c.name TeacherName,a.teacherScore,a.companyScore

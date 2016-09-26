@@ -28,10 +28,9 @@ public class ExcelReader {
 
     /**
      * 从Cell中获取对应类型的值的字符串
-     * @param cell
-     * @return
+     * @param cell 表格元素
+     * @return 表格元素中的值
      */
-    // TODO 识别excel中的列名
     private static String getCellFormatValue(Cell cell) {
         String cellValue = "";
         if (cell != null) {

@@ -65,7 +65,6 @@ public class CourseServiceImpl implements ICourseService{
 
         switch (actor){
             case 1:
-                //TODO 管理员 查看课程?
                 break;
             case 2:
                 courseList = this.courseDao.companyGetCourses(map);

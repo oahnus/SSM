@@ -132,7 +132,6 @@ public class TeacherController {
             List<Teacher> list = ExcelReader.readExcelFile(file, 1);
 
             if(list != null) {
-                //TODO 用正则表达式判断数据是否正确
                 List<Teacher> insertTeacherList = teacherService.insertTeacher(list);
 
                 map.put("status","success");

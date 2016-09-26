@@ -111,7 +111,6 @@ public class StudentController {
      * @param data Bean 用于接收JSON数据中的id对象
      * @return 结果信息
      */
-    //TODO 删除学生时，同时删除学生在选课表中的记录和评分表中的记录？
     @ResponseBody
     @RequestMapping(value = "/delete")
     public Map<String,Object> delete(@RequestBody Data<ID> data){
