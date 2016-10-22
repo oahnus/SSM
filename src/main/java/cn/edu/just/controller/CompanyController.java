@@ -2,13 +2,15 @@ package cn.edu.just.controller;
 
 import cn.edu.just.pojo.Company;
 import cn.edu.just.pojo.Data;
-import cn.edu.just.pojo.Teacher;
 import cn.edu.just.service.ICompanyService;
 import cn.edu.just.util.ApplicationContextConfig;
 import cn.edu.just.util.ExcelReader;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,13 +30,15 @@ import java.util.Map;
 @RequestMapping("/company")
 public class CompanyController {
 
+    private Logger logger = LoggerFactory.getLogger(CompanyController.class);
+
     /**
      * 获取所有公司的信息
      * @return 结果信息,包含status,info,公司信息
      */
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=get"})
     @ResponseBody
-    public Map getCompanyList(){
+    public Map getCompanyList(HttpServletRequest request){
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
 
@@ -55,7 +59,7 @@ public class CompanyController {
      * @return 结果信息
      */
     @ResponseBody
-    @RequestMapping(value = "/insert",method = RequestMethod.POST)
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=post"})
     public Map insertCompany(@RequestBody MultipartFile excelFile, HttpServletRequest request) throws IOException {
         String path = request.getSession().getServletContext().getRealPath("/WEB-INF/upload/temp/");
 
@@ -103,11 +107,11 @@ public class CompanyController {
      * @return 返回删除操作成功或失败的状态信息
      */
     @ResponseBody
-    @RequestMapping(value = "/delete")
-    public Map deleteCompany(@RequestBody Data<ID> data){
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=delete"})
+    public Map deleteCompany(@RequestBody Data<CompanyID> data){
 
-        List<ID> idList = data.getData();
-        int[] ids = new int[idList.size()];
+        List<CompanyID> companyIdList = data.getData();
+        int[] ids = new int[companyIdList.size()];
 
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
@@ -121,12 +125,21 @@ public class CompanyController {
 
         return map;
     }
+//
+//    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+//    @ResponseBody
+//    public Map handleError(){
+//        Map map = new HashMap<>();
+//        map.put("status","error");
+//        map.put("info","HttpRequestMethodNotSupportedException");
+//        return map;
+//    }
 
-    // 接收json中的学生id,实现批量删除
-    static class ID{
+    // 接收json中的公司id,实现批量删除
+    static class CompanyID {
         private int id;
 
-        public ID(){super();}
+        public CompanyID(){super();}
 
         public int getId() {
             return id;

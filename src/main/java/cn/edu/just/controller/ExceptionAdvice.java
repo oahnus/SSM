@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.ServletException;
 import java.io.UnsupportedEncodingException;
@@ -24,19 +25,25 @@ public class ExceptionAdvice {
     private Map<String,Object> map;
 
 //    NoHandlerFoundException
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public Map handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public Map handleNoHandlerFoundException(Exception e) {
         map = new HashMap<>();
         map.put("status","error");
         map.put("info",e.getMessage());
         return map;
     }
 
-    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public Map handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+    public Map handleHttpRequestMethodNotSupportedException(Exception e) {
+        map = new HashMap<>();
+        map.put("status","error");
+        map.put("info","HttpRequestMethodNotSupportedException");
+        return map;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public Map handleHttpMessageNotReadableException(Exception e) {
         map = new HashMap<>();
         map.put("status","error");
         map.put("info",e.getMessage());
@@ -45,7 +52,7 @@ public class ExceptionAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ServletRequestBindingException.class)
-    public Map handleServletRequestBindingException(ServletRequestBindingException e) {
+    public Map handleServletRequestBindingException(Exception e) {
         map = new HashMap<>();
         map.put("status","error");
         map.put("info",e.getMessage());
@@ -54,7 +61,7 @@ public class ExceptionAdvice {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(UnsupportedEncodingException.class)
-    public Map handleUnsupportedEncodingException(UnsupportedEncodingException e){
+    public Map handleUnsupportedEncodingException(Exception e){
         map = new HashMap<>();
         map.put("status","error");
         map.put("info",e.getMessage());
@@ -69,7 +76,4 @@ public class ExceptionAdvice {
         map.put("info",e.getMessage());
         return map;
     }
-
-
-
 }

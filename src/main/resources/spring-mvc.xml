@@ -18,7 +18,7 @@
 
     <!--<bean class="cn.edu.just.errorhandler.BaseGlobalExceptionHandler"></bean>-->
 
-    <mvc:view-controller path="/404" view-name="404"/>
+    <!--<mvc:view-controller path="/404" view-name="404"/>-->
     <!--<mvc:view-controller path="/400" view-name="400"/>-->
     <!--<mvc:view-controller path="/500" view-name="500"/>-->
 
@@ -51,7 +51,6 @@
 
     <!--配置静态资源处理-->
     <mvc:resources mapping="/upload/**" location="/WEB-INF/upload/"/>
-    <mvc:resources mapping="/static/**" location="/WEB-INF/static/"/>
     <mvc:resources mapping="/resource/**" location="/resource/"/>
 
 </beans>

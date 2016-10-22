@@ -11,7 +11,18 @@ public class User {
     // 角色
     private int actor;
 
+    private String newPassword;
+
     public User(){}
+
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
 
     public String getUsername() {
         return username;
