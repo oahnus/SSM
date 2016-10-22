@@ -37,7 +37,7 @@ public class TaskController {
      */
     @ResponseBody
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public Map<String,Object> getTaskListByCourseId(@RequestParam("courseId") Integer courseId){
+    public Map getTaskListByCourseId(@RequestParam("courseId") Integer courseId){
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
         ITaskService taskService = (ITaskService) appContext.getBean("taskService");
@@ -63,7 +63,7 @@ public class TaskController {
      */
     @ResponseBody
     @RequestMapping(value = "/release",method = RequestMethod.POST)
-    public Map<String,Object> releaseTask(@RequestParam(value = "content",required = false) MultipartFile content, HttpServletRequest request) throws IOException {
+    public Map releaseTask(@RequestParam(value = "content",required = false) MultipartFile content, HttpServletRequest request) throws IOException {
         // 获取任务文件的保存路径
         String path = request.getSession().getServletContext().getRealPath("/WEB-INF/upload/task/");
         Map<String,Object> map = new HashMap<>();
@@ -195,7 +195,7 @@ System.out.println(url);
      */
     @ResponseBody
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
-    public Map<String,Object> deleteTaskBatch(@RequestBody Data<ID> data){
+    public Map deleteTaskBatch(@RequestBody Data<ID> data){
         Map<String,Object> map = new HashMap<>();
         List<ID> idList = data.getData();
         int[] ids = new int[idList.size()];

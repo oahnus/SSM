@@ -1,5 +1,7 @@
 package cn.edu.just.errorhandler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -11,13 +13,15 @@ import java.io.IOException;
 
 public class BaseGlobalExceptionHandler implements HandlerExceptionResolver{
 
+    private Logger logger = LoggerFactory.getLogger(BaseGlobalExceptionHandler.class);
+
     @Override
     public ModelAndView resolveException(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
 
         ModelAndView mav = new ModelAndView();
         String message = "";
 
-System.out.println("Error:"+e.getClass().getName()+"\n"+
+        logger.error("Error:"+e.getClass().getName()+"\n"+
         "Cause:"+e.getCause().getMessage());
 
         if(e instanceof MultipartException){

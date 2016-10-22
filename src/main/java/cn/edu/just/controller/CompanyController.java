@@ -34,7 +34,7 @@ public class CompanyController {
      */
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     @ResponseBody
-    public Map<String,Object> getCompanyList(){
+    public Map getCompanyList(){
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
 
@@ -56,7 +56,7 @@ public class CompanyController {
      */
     @ResponseBody
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Map<String,Object> insertCompany(@RequestBody MultipartFile excelFile, HttpServletRequest request) throws IOException {
+    public Map insertCompany(@RequestBody MultipartFile excelFile, HttpServletRequest request) throws IOException {
         String path = request.getSession().getServletContext().getRealPath("/WEB-INF/upload/temp/");
 
         // 路径不存在则创建
@@ -104,7 +104,7 @@ public class CompanyController {
      */
     @ResponseBody
     @RequestMapping(value = "/delete")
-    public Map<String,Object> deleteCompany(@RequestBody Data<ID> data){
+    public Map deleteCompany(@RequestBody Data<ID> data){
 
         List<ID> idList = data.getData();
         int[] ids = new int[idList.size()];

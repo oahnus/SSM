@@ -22,7 +22,7 @@ public class SummaryController {
 
     @ResponseBody
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public Map<String,Object> getSummary(
+    public Map getSummary(
             @RequestParam(value = "profession",required = false) String profession,
             @RequestParam(value = "studentId",required = false) String studentId,
             @RequestParam(value = "courseName",required = false) String courseName,

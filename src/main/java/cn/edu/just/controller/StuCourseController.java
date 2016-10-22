@@ -28,7 +28,7 @@ public class StuCourseController {
      */
     @ResponseBody
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public Map<String,Object> getStudentCourseList(@RequestParam("username") String studentId,
+    public Map getStudentCourseList(@RequestParam("username") String studentId,
                                                    @RequestParam("actor") int actor){
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
@@ -55,7 +55,7 @@ public class StuCourseController {
      */
     @ResponseBody
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Map<String,Object> insertStudentCourse(@RequestBody Data<StuCourse> data){
+    public Map insertStudentCourse(@RequestBody Data<StuCourse> data){
         SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
@@ -84,7 +84,7 @@ public class StuCourseController {
      */
     @ResponseBody
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
-    public Map<String,Object> delete(@RequestBody Data<ID> data){
+    public Map delete(@RequestBody Data<ID> data){
         List<ID> idList = data.getData();
         int[] ids = new int[idList.size()];
 

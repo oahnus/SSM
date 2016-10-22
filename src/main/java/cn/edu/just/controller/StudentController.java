@@ -37,7 +37,7 @@ public class StudentController {
      */
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     @ResponseBody
-    public Map<String,Object> list(@RequestParam(value = "courseId",required = false) Integer courseId){
+    public Map list(@RequestParam(value = "courseId",required = false) Integer courseId){
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
         IStudentService studentService = (IStudentService) appContext.getBean("studentService");
@@ -66,7 +66,7 @@ public class StudentController {
      */
     @ResponseBody
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Map<String,Object> insert(@RequestBody MultipartFile excelFile, HttpServletRequest request) throws IOException {
+    public Map insert(@RequestBody MultipartFile excelFile, HttpServletRequest request) throws IOException {
         String path = request.getSession().getServletContext().getRealPath("/WEB-INF/upload/temp/");
 
         // 路径不存在则创建
@@ -113,7 +113,7 @@ public class StudentController {
      */
     @ResponseBody
     @RequestMapping(value = "/delete")
-    public Map<String,Object> delete(@RequestBody Data<ID> data){
+    public Map delete(@RequestBody Data<ID> data){
         Map<String,Object> map = new HashMap<>();
         List<ID> idList = data.getData();
         int[] ids = new int[idList.size()];
@@ -141,7 +141,7 @@ public class StudentController {
      */
     @ResponseBody
     @RequestMapping(value = "/result/upload",method = RequestMethod.POST)
-    public Map<String,Object> uploadResult(HttpServletRequest request) throws IOException {
+    public Map uploadResult(HttpServletRequest request) throws IOException {
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
         IStudentService studentService = (IStudentService) appContext.getBean("studentService");
 
@@ -277,7 +277,7 @@ public class StudentController {
 
     @ResponseBody
     @RequestMapping(value = "/result/list",method = RequestMethod.GET)
-    public Map<String,Object> getResultList(@RequestParam("courseId")Integer courseId,
+    public Map getResultList(@RequestParam("courseId")Integer courseId,
                                             @RequestParam("username")String username){
         Map<String,Object> map = new HashMap<>();
 
@@ -299,7 +299,7 @@ public class StudentController {
 
     @ResponseBody
     @RequestMapping(value = "/result/delete")
-    public Map<String,Object> deleteResult(@RequestBody Data<ID> data){
+    public Map deleteResult(@RequestBody Data<ID> data){
         Map<String,Object> map = new HashMap<>();
         List<ID> idList = data.getData();
         int[] ids = new int[idList.size()];

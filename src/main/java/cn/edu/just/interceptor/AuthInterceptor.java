@@ -1,6 +1,8 @@
 package cn.edu.just.interceptor;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -12,6 +14,8 @@ import java.util.Date;
 import java.util.Map;
 
 public class AuthInterceptor implements HandlerInterceptor{
+    private Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
+
     private String[] accessUrl = {
             "/ShiXun-6/api/user/verify",
             "/ShiXun-6/api/400",
@@ -23,10 +27,10 @@ public class AuthInterceptor implements HandlerInterceptor{
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         httpServletResponse.setContentType("text/html;charset=utf-8");
         SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
-System.out.println("拦截器6");
-System.out.println(sdf.format(new Date())+"  INFO  "+httpServletRequest.getRemoteAddr()+" > "+httpServletRequest.getRequestURL());
+logger.info("拦截器");
+logger.info(sdf.format(new Date())+"  INFO  "+httpServletRequest.getRemoteAddr()+" > "+httpServletRequest.getRequestURL());
 
-        System.out.println(httpServletRequest.getRequestURI());
+//        System.out.println(httpServletRequest.getRequestURI());
         return true;
 //        Cookie[] cookies = httpServletRequest.getCookies();
 //        String username = "";

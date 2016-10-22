@@ -94,7 +94,6 @@ public class TeacherServiceImpl implements ITeacherService {
 
         List<Teacher> teachers = new ArrayList<>();
 
-
         for(int i=0;i<teacherList.size();i++){
             Teacher teacher = teacherList.get(i);
             // 过滤掉无效数据

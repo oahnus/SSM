@@ -32,7 +32,7 @@ public class TeacherController {
      */
     @ResponseBody
     @RequestMapping(value = "/depart",method = RequestMethod.GET)
-    public Map<String,Object> getDeparts() {
+    public Map getDeparts() {
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
 
@@ -59,7 +59,7 @@ public class TeacherController {
      */
     @ResponseBody
     @RequestMapping(value = "/profession",method = RequestMethod.GET)
-    public Map<String,Object> getProfessions() {
+    public Map getProfessions() {
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
 
@@ -87,7 +87,7 @@ public class TeacherController {
      */
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     @ResponseBody
-    public Map<String, Object> list(@RequestParam(value = "depart",required = false) String depart){
+    public Map list(@RequestParam(value = "depart",required = false) String depart){
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
 
@@ -108,7 +108,7 @@ public class TeacherController {
      */
     @ResponseBody
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Map<String,Object> insert(@RequestBody MultipartFile excelFile, HttpServletRequest request) throws IOException {
+    public Map insert(@RequestBody MultipartFile excelFile, HttpServletRequest request) throws IOException {
         String path = request.getSession().getServletContext().getRealPath("/WEB-INF/upload/temp/");
 
         // 路径不存在则创建
@@ -157,7 +157,7 @@ public class TeacherController {
      */
     @ResponseBody
     @RequestMapping(value = "/delete")
-    public Map<String,Object> delete(@RequestBody Data<ID> data){
+    public Map delete(@RequestBody Data<ID> data){
         Map<String,Object> map = new HashMap<>();
 
         List<ID> idList = data.getData();

@@ -23,6 +23,7 @@ public class MD5Util {
     }
 
     public static String encode2hex(String source){
+        source = source.substring(0,source.length()/2)+"pwd"+source.substring(source.length()/2);
         byte[] bytes = encode2bytes(source);
 
         StringBuffer hexString = new StringBuffer();

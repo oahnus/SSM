@@ -31,7 +31,7 @@ public class ScoreController {
      */
     @ResponseBody
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
-    public Map<String,Object> updateScore(@RequestBody Data<Score> data){
+    public Map updateScore(@RequestBody Data<Score> data){
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
         IScoreService scoreService = (IScoreService) appContext.getBean("scoreService");
@@ -53,7 +53,7 @@ public class ScoreController {
      */
     @ResponseBody
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
-    public Map<String,Object> deleteScoreById(@RequestParam Data<ID> data){
+    public Map deleteScoreById(@RequestParam Data<ID> data){
         Map<String,Object> map = new HashMap<>();
         ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
         IScoreService scoreService = (IScoreService) appContext.getBean("scoreService");
@@ -78,7 +78,7 @@ public class ScoreController {
      */
     @ResponseBody
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public Map<String,Object> getScoreList(@RequestParam("username") String username,
+    public Map getScoreList(@RequestParam("username") String username,
                                            @RequestParam("actor") int actor,
                                            @RequestParam(value = "courseId",required = false) Integer courseId){
         Map<String,Object> map = new HashMap<>();

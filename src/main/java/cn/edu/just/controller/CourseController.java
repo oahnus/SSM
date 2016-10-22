@@ -35,7 +35,7 @@ public class CourseController {
      */
     @ResponseBody
     @RequestMapping(value = "/list",method = RequestMethod.GET)
-    public Map<String,Object> getCourseList(@RequestParam("username") String username,
+    public Map getCourseList(@RequestParam("username") String username,
                                             @RequestParam("actor") int actor,
                                             @RequestParam(value = "courseName",required = false) String courseName,
                                             @RequestParam(value = "teacherName",required = false) String teacherName,
@@ -62,7 +62,7 @@ public class CourseController {
      */
     @ResponseBody
     @RequestMapping(value = "/release",method = RequestMethod.POST)
-    public Map<String,Object> releaseCourse(@RequestParam(required = false,value = "addition") MultipartFile addition,
+    public Map releaseCourse(@RequestParam(required = false,value = "addition") MultipartFile addition,
                                             HttpServletRequest request) throws Exception {
 
         // 获取课程附件存储路径
@@ -191,7 +191,7 @@ public class CourseController {
      */
     @ResponseBody
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
-    public Map<String,Object> deleteCourseByIdArray(@RequestBody Data<ID> data){
+    public Map deleteCourseByIdArray(@RequestBody Data<ID> data){
         Map<String,Object> map = new HashMap<>();
         List<ID> idList = data.getData();
         int[] ids = new int[idList.size()];

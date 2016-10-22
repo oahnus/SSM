@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartException;
 
 import javax.servlet.ServletException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,15 +51,15 @@ public class ExceptionAdvice {
         map.put("info",e.getMessage());
         return map;
     }
-//
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    @ExceptionHandler(Exception.class)
-//    public Map handleMultipartException(MultipartException e) {
-//        map = new HashMap<>();
-//        map.put("status","error");
-//        map.put("info",e.getMessage());
-//        return map;
-//    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(UnsupportedEncodingException.class)
+    public Map handleUnsupportedEncodingException(UnsupportedEncodingException e){
+        map = new HashMap<>();
+        map.put("status","error");
+        map.put("info",e.getMessage());
+        return map;
+    }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -37,9 +39,9 @@ public class UserController {
      * @return 结果信息,验证成果status success,失败 status error
      */
     @RequestMapping(value="/verify",method = RequestMethod.POST)
-    public ResponseEntity<Map> verify(@RequestBody Data<User> data,
+    public Map verify(@RequestBody Data<User> data,
                                  HttpServletRequest request,
-                                 HttpServletResponse response){
+                                 HttpServletResponse response) throws UnsupportedEncodingException {
 
         String username = data.getData().get(0).getUsername();
         String password = data.getData().get(0).getPassword();
@@ -75,6 +77,7 @@ public class UserController {
         if(isLegalUser){
             long randomNum = random.nextLong();
 
+            username = URLEncoder.encode(username,"UTF-8");
             request.getSession().setAttribute(username,randomNum);
             Cookie cookie = new Cookie("username",username+"#"+randomNum);
             cookie.setMaxAge(1000);//1000sec
@@ -85,9 +88,9 @@ public class UserController {
             map.put("info","成功");
         }else{
             map.put("status","error");
-            map.put("info","失败");
+            map.put("info","用户名或密码错误");
         }
-        return new ResponseEntity<Map>(map, HttpStatus.OK);
+        return map;
     }
 
     /**
@@ -96,7 +99,7 @@ public class UserController {
      */
     @ResponseBody
     @RequestMapping(value = "/modify",method = RequestMethod.POST)
-    public Map<String,Object> modify(@RequestBody Data<ModifyUser> data){
+    public Map modify(@RequestBody Data<ModifyUser> data){
         Map<String,Object> map = new HashMap<>();
         // 获取用户名，新旧密码，角色
         String username = data.getData().get(0).getUsername();
