@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 用包名接口名作namespace的名称 -->
+<mapper namespace="cn.edu.just.dao.IStudentDao">
+
+    <resultMap id="result" type="cn.edu.just.pojo.Task">
+        <result column="resultURL" jdbcType="VARCHAR" property="resultURL"/>
+        <result column="resultMemo" jdbcType="VARCHAR" property="resultMemo"/>
+    </resultMap>
+    <!--学生登陆验证-->
+    <select id="verifyUser" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Student">
+        SELECT id,studentId,name,profession,depart FROM student WHERE studentId = #{username} and pwd = #{password}
+    </select>
+
+    <!--获取学生列表-->
+    <select id="getStudentList" resultType="cn.edu.just.pojo.Student">
+        SELECT id,studentId,name,profession,depart FROM student
+    </select>
+
+    <!-- 教师获取某门课被哪些学生选-->
+    <select id="getStudentListByCourseId" parameterType="java.lang.Integer" resultType="cn.edu.just.pojo.Student">
+        SELECT studentId,name,profession,depart FROM student WHERE studentId IN
+        (SELECT studentId FROM stucourse WHERE courseId = #{_parameter});
+    </select>
+
+    <insert id="insertStudent" parameterType="cn.edu.just.pojo.Student" useGeneratedKeys="true" keyProperty="id">
+        REPLACE INTO student (studentId,name,profession,depart,pwd) VALUES
+        (#{studentId},#{name},#{profession},#{depart},#{pwd})
+    </insert>
+
+    <!--按id检索数据-->
+    <select id="queryById" parameterType="java.lang.Integer" resultType="cn.edu.just.pojo.Student">
+        SELECT id,studentId,name,profession,depart FROM student WHERE id = #{_parameter}
+    </select>
+
+    <!--批量插入-->
+    <insert id="insertStudentBatch" parameterType="java.util.List">
+        INSERT IGNORE INTO student (studentId,name,profession,depart,pwd) VALUES
+        <foreach collection="list" item="item" separator="," index="index">
+            (#{item.studentId},#{item.name},#{item.profession},#{item.depart},#{item.pwd})
+        </foreach>
+    </insert>
+
+    <!--根据id批量删除-->
+    <delete id="deleteStudentBatch" parameterType="java.util.List">
+        DELETE FROM student WHERE id IN (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+
+    <!--修改密码-->
+    <update id="modifyPwd" parameterType="java.util.Map">
+        UPDATE student SET pwd = #{newPassword} WHERE studentid = #{username} and pwd = #{oldPassword}
+    </update>
+
+    <!--##################-->
+    <!--处理学生任务成果的提交-->
+    <select id="queryByTaskIdAndStudentId" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT id FROM result
+        WHERE taskId = #{taskId}
+        AND studentId = #{studentId}
+    </select>
+
+    <!--增添任务成果-->
+    <insert id="insertTaskResult" parameterType="java.util.Map">
+        INSERT INTO result (taskId,studentId,resultURL,memo) VALUES (#{taskId},#{studentId},#{url},#{memo})
+    </insert>
+
+    <update id="updateTaskResult" parameterType="java.util.Map">
+        UPDATE result SET memo = #{memo} WHERE id = #{id}
+    </update>
+
+    <!--删除任务成果-->
+    <delete id="deleteTaskResult" parameterType="java.util.List">
+        DELETE FROM result WHERE id IN (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+
+    <!--获取学生在某门课下的所有任务的成果提交情况-->
+    <select id="getResult" parameterType="java.lang.Integer" resultMap="result">
+        SELECT resultURL,memo resultMemo
+        FROM result
+        WHERE taskId = #{_parameter} limit 1
+    </select>
+</mapper>

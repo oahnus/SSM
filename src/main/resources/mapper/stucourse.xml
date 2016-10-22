@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 学生选课表SQL -->
+<mapper namespace="cn.edu.just.dao.IStuCourseDao">
+
+    <!--增添选课-->
+    <insert id="insertStuCourse" parameterType="cn.edu.just.pojo.StuCourse" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO stucourse (courseId,studentId,editTime)
+        VALUES (#{courseId},#{studentId},#{editTime})
+    </insert>
+
+    <!--TODO 选课在课程结束时，要保留分数，但该课程不显示学生的选课-->
+    <!--删除选课-->
+    <delete id="deleteStuCourse" parameterType="java.lang.Integer">
+        DELETE FROM stucourse WHERE id IN (
+          <foreach collection="list" item="item" separator=",">
+              #{item}
+          </foreach>
+        )
+    </delete>
+
+    <!--查询选课-->
+    <select id="queryByCourseIdAndStudentId" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT id from stucourse WHERE courseId = #{courseId} AND studentId = #{studentId}
+    </select>
+
+    <select id="queryById" parameterType="java.lang.Integer" resultType="cn.edu.just.pojo.StuCourse">
+        SELECT id,courseId,studentId,editTime FROM stucourse WHERE id = #{_parameter}
+    </select>
+
+    <!--<select id="queryByStudentId" parameterType="java.lang.String" resultType="cn.edu.just.pojo.StuCourse">-->
+        <!--SELECT a.id id,b.id courseId,b.name courseName,c.studentId studentId,c.name studentName,a.editTime-->
+        <!--FROM stucourse a,course b,student c-->
+        <!--WHERE a.courseId = b.id-->
+        <!--AND a.studentId = c.studentId-->
+        <!--AND c.studentId = #{_parameter};-->
+    <!--</select>-->
+    <!--按学号查询？查询课程名，授课教师-->
+    <select id="getStudentCourseList" parameterType="java.lang.String" resultType="cn.edu.just.pojo.StuCourse">
+        SELECT id,courseId,editTime,studentId
+        FROM stucourse
+        WHERE studentId = #{_parameter}
+    </select>
+</mapper>

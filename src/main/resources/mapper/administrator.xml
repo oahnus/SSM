@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 用包名接口名作namespace的名称 -->
+<mapper namespace="cn.edu.just.dao.IAdministratorDao">
+    <!--登陆验证-->
+    <select id="verifyUser" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Administrator">
+        SELECT id FROM administrator WHERE username = #{username} and pwd = #{password}
+    </select>
+
+    <!--修改密码-->
+    <update id="modifyPwd" parameterType="java.util.Map">
+        UPDATE administrator SET pwd = #{newPassword} WHERE username = #{username} and pwd = #{oldPassword}
+    </update>
+</mapper>

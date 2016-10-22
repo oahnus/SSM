@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 用包名接口名作namespace的名称 -->
+<mapper namespace="cn.edu.just.dao.ISummaryDao">
+    <select id="getSummaryList" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Summary">
+        select distinct a.id,c.id courseId,a.profession profession,
+        c.name courseName,
+        a.studentId,a.name studentName,
+        b.name teacherName,
+        c.company companyName,
+        e.teacherScore,e.companyScore
+        from student a,teacher b,course c,score e
+        where c.teacher = b.workerId
+        and c.id = e.courseId
+        and e.studentId = a.studentId
+        <if test="profession != null and !&quot;&quot;.equals(profession.trim())">
+            AND a.profession = #{profession}
+        </if>
+        <if test="studentId != null and !&quot;&quot;.equals(studentId.trim())">
+            AND a.studentId LIKE concat('%',#{studentId},'%')
+        </if>
+        <if test="courseName != null and !&quot;&quot;.equals(courseName.trim())">
+            AND c.name LIKE concat('%',#{courseName},'%')
+        </if>
+        <if test="teacherName != null and !&quot;&quot;.equals(teacherName.trim())">
+            AND b.name LIKE concat('%',#{teacherName},'%')
+        </if>
+        <if test="companyName != null and !&quot;&quot;.equals(companyName.trim())">
+            AND c.company LIKE concat('%',#{companyName},'%')
+        </if>
+    </select>
+
+    <select id="companyGetSummaryList" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Summary">
+        select distinct c.id,a.profession profession,
+        c.name courseName,
+        a.studentId,a.name studentName,
+        b.name teacherName,
+        e.teacherScore,e.companyScore
+        from student a,teacher b,course c,score e
+        where c.teacher = b.workerId
+        and c.id = e.courseId
+        and e.studentId = a.studentId
+        and c.company = #{username}
+        <if test="profession != null and !&quot;&quot;.equals(profession.trim())">
+            AND a.profession = #{profession}
+        </if>
+        <if test="studentId != null and !&quot;&quot;.equals(studentId.trim())">
+            AND a.studentId LIKE concat('%',#{studentId},'%')
+        </if>
+        <if test="courseName != null and !&quot;&quot;.equals(courseName.trim())">
+            AND c.name LIKE concat('%',#{courseName},'%')
+        </if>
+        <if test="teacherName != null and !&quot;&quot;.equals(teacherName.trim())">
+            AND b.name LIKE concat('%',#{teacherName},'%')
+        </if>
+    </select>
+
+    <select id="teacherGetSummaryList" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Summary">
+        select distinct b.id courseId,a.profession profession,
+        b.name courseName,
+        a.studentId,a.name studentName,
+        b.company companyName,
+        c.teacherScore,c.companyScore
+        from student a,course b,score c
+        where b.teacher = #{username}
+        and b.id = c.courseId
+        and c.studentId = a.studentId
+        <if test="profession != null and !&quot;&quot;.equals(profession.trim())">
+            AND a.profession = #{profession}
+        </if>
+        <if test="studentId != null and !&quot;&quot;.equals(studentId.trim())">
+            AND a.studentId LIKE concat('%',#{studentId},'%')
+        </if>
+        <if test="courseName != null and !&quot;&quot;.equals(courseName.trim())">
+            AND b.name LIKE concat('%',#{courseName},'%')
+        </if>
+        <if test="companyName != null and !&quot;&quot;.equals(companyName.trim())">
+            AND b.company LIKE concat('%',#{companyName},'%')
+        </if>
+    </select>
+</mapper>

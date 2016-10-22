@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 用包名接口名作namespace的名称 -->
+<mapper namespace="cn.edu.just.dao.ITeacherDao">
+    <!--登陆验证-->
+    <select id="verifyUser" parameterType="java.util.Map" resultType="cn.edu.just.pojo.Teacher">
+        SELECT id,workerId,name,profession,depart FROM teacher WHERE workerId = #{username} and pwd = #{password}
+    </select>
+
+    <!--获取学院列表-->
+    <select id="getDepart" resultType="java.lang.String">
+        SELECT depart FROM teacher GROUP BY depart
+    </select>
+
+    <!--获取专业列表-->
+    <select id="getProfession" resultType="java.lang.String">
+        SELECT profession FROM teacher GROUP BY profession
+    </select>
+
+    <!--获取教师列表-->
+    <select id="getTeacherList" resultType="cn.edu.just.pojo.Teacher" parameterType="java.lang.String">
+        SELECT id,workerId,name,profession,depart FROM teacher WHERE 1=1
+        <if test="_parameter!=null and !&quot;&quot;.equals(_parameter.trim())">
+            AND depart = #{_parameter}
+        </if>
+    </select>
+
+    <!--修改插入数据为单条插入，以便返回插入信息给前台显示-->
+
+    <insert id="insertTeacher" parameterType="cn.edu.just.pojo.Teacher" useGeneratedKeys="true" keyProperty="id">
+        REPLACE INTO teacher (workerId,name,profession,depart,pwd) VALUES
+        (#{workerId},#{name},#{profession},#{depart},#{pwd})
+    </insert>
+
+    <!--根据id获取信息-->
+    <select id="queryById" parameterType="java.lang.Integer" resultType="cn.edu.just.pojo.Teacher">
+        SELECT id,name,workerId,profession,depart FROM teacher WHERE id = #{_parameter}
+    </select>
+
+    <!--批量添加-->
+    <insert id="insertTeacherBatch" parameterType="java.util.List">
+        INSERT IGNORE INTO teacher (workerId,name,profession,depart,pwd) VALUES
+        <foreach collection="list" item="item" separator="," index="index">
+            (#{item.workerId},#{item.name},#{item.profession},#{item.depart},#{item.pwd})
+        </foreach>
+    </insert>
+
+    <!--批量删除-->
+    <delete id="deleteTeacherBatch" parameterType="java.util.List">
+        DELETE FROM teacher WHERE id IN (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+
+    <!--修改密码-->
+    <update id="modifyPwd" parameterType="java.util.Map">
+        UPDATE teacher SET pwd = #{newPassword} WHERE workerid = #{username} and pwd = #{oldPassword}
+    </update>
+</mapper>

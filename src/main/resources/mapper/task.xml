@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 用包名接口名作namespace的名称 -->
+<mapper namespace="cn.edu.just.dao.ITaskDao">
+    <!--插入任务-->
+    <insert id="insertTask" parameterType="cn.edu.just.pojo.Task" useGeneratedKeys="true" keyProperty="id">
+       INSERT INTO task (name,startTime,endTime,courseId)
+       VALUES (#{name},#{startTime},#{endTime},#{courseId})
+    </insert>
+
+    <!--批量删除-->
+    <delete id="deleteTaskBatchByTaskId" parameterType="java.util.List">
+        DELETE FROM task WHERE id IN (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+
+    <!--通过课程id删除，在删除课程时，同时删除课程下所有的任务-->
+    <delete id="deleteTaskBatchByCourseId" parameterType="java.util.List">
+        DELETE FROM task WHERE courseId IN (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+
+    <!--更新任务内容的下载地址-->
+    <update id="updateTask" parameterType="cn.edu.just.pojo.Task">
+        UPDATE task
+        <set>
+            <if test="content!=null and content!=''">
+                content = #{content},
+            </if>
+            <if test="name!=null and name!=''">
+                name = #{name},
+            </if>
+            <if test="memo!=null and memo!=''">
+                memo = #{memo},
+            </if>
+            <if test="startTime!=null">
+                startTime = STR_TO_DATE(#{startTime}, '%Y-%m-%d %H:%i:%s'),
+            </if>
+            <if test="endTime!=null">
+                endTime = STR_TO_DATE(#{endTime}, '%Y-%m-%d %H:%i:%s'),
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!--根据课程ID检索-->
+    <select id="getTaskList" parameterType="java.lang.Integer" resultType="cn.edu.just.pojo.Task">
+        SELECT id,name,content,startTime,endTime,courseId FROM task WHERE courseId = #{_parameter}
+    </select>
+
+    <!--根据课程id检索数据和任务名检索-->
+    <select id="queryByNameAndCourseId" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT id FROM task WHERE name = #{taskName} and courseId = #{courseId}
+    </select>
+
+</mapper>
