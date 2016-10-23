@@ -49,6 +49,11 @@ public class TeacherServiceImpl implements ITeacherService {
     }
 
     @Override
+    public Teacher getTeacherInfo(String username) {
+        return teacherDao.getTeacherInfo(username);
+    }
+
+    @Override
     public void insertTeacherBatch(List<Teacher> list) {
         this.teacherDao.insertTeacherBatch(list);
     }

@@ -27,6 +27,10 @@
         </if>
     </select>
 
+    <!--获取教师信息-->
+    <select id="getTeacherInfo" resultType="cn.edu.just.pojo.Teacher" parameterType="java.lang.String">
+        SELECT id,workerId,name,profession,depart FROM teacher WHERE workerId = #{_parameter}
+    </select>
     <!--修改插入数据为单条插入，以便返回插入信息给前台显示-->
 
     <insert id="insertTeacher" parameterType="cn.edu.just.pojo.Teacher" useGeneratedKeys="true" keyProperty="id">

@@ -5,6 +5,8 @@ import cn.edu.just.pojo.Data;
 import cn.edu.just.service.ICourseService;
 import cn.edu.just.util.ApplicationContextConfig;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,25 +27,24 @@ import java.util.Map;
 @Controller
 @RequestMapping("/course")
 public class CourseController {
+    private Logger logger = LoggerFactory.getLogger(CourseController.class);
     // 服务器上允许上传,下载的文件类型
     public static final String[] EXTENSION = {".doc",".docx",".pdf"};
+    ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
+    ICourseService courseService = (ICourseService) appContext.getBean("courseService");
 
     /**
      * 查询课程信息,公司获取本公司下的课程,教师获取本人教授的课程,学生获取本专业的课程
      * @return 结果信息,包含课程信息
      */
     @ResponseBody
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=get"})
     public Map getCourseList(@RequestParam("username") String username,
                                             @RequestParam("actor") int actor,
                                             @RequestParam(value = "courseName",required = false) String courseName,
                                             @RequestParam(value = "teacherName",required = false) String teacherName,
                                             @RequestParam(value = "companyName",required = false) String companyName){
         Map<String,Object> map = new HashMap<>();
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-
-        ICourseService courseService = (ICourseService) appContext.getBean("courseService");
-
         List<Course> courseList = courseService.getCourses(username,actor,courseName,teacherName,companyName);
 
         map.put("status","success");
@@ -61,7 +61,7 @@ public class CourseController {
      * @return 返回json格式的上传信息
      */
     @ResponseBody
-    @RequestMapping(value = "/release",method = RequestMethod.POST)
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=post"})
     public Map releaseCourse(@RequestParam(required = false,value = "addition") MultipartFile addition,
                                             HttpServletRequest request) throws Exception {
 
@@ -73,15 +73,18 @@ public class CourseController {
 
         Map<String,Object> map = new HashMap<>();
 
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-        ICourseService courseService = (ICourseService) appContext.getBean("courseService");
-
         // 获取表单参数
         String name = request.getParameter("name");
         String profession = request.getParameter("profession");
         String teacher = request.getParameter("teacher");
         String company = request.getParameter("company");
         String memo = request.getParameter("memo");
+
+        logger.info(addition.getOriginalFilename());
+        logger.info(name);
+        logger.info(profession);
+        logger.info(company);
+        logger.info(teacher);
 
         // 将课程信息封装在Course对象中
         Course course = new Course();
@@ -91,7 +94,7 @@ public class CourseController {
         course.setCompany(company);
         course.setMemo(memo);
 
-        //保存课程信息到数据库中
+//        //保存课程信息到数据库中
         Integer id = courseService.queryCourse(course);
         if(id == null){
             courseService.insertCourse(course);
@@ -112,6 +115,8 @@ public class CourseController {
             // 文件保存到本地后,将文件的存储url保存到本地
             String url = new String(request.getRequestURL());
             url = url.substring(0,url.lastIndexOf('/'))+"/download/"+id;
+
+            logger.info(url);
 
             // 将url保存到数据库
             courseService.updateAdditionUrl(url,id);
@@ -190,18 +195,15 @@ public class CourseController {
      * @return 结果信息
      */
     @ResponseBody
-    @RequestMapping(value = "/delete",method = RequestMethod.POST)
-    public Map deleteCourseByIdArray(@RequestBody Data<ID> data){
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=delete"})
+    public Map deleteCourseByIdArray(@RequestBody Data<CourseID> data){
         Map<String,Object> map = new HashMap<>();
-        List<ID> idList = data.getData();
-        int[] ids = new int[idList.size()];
+        List<CourseID> courseIdList = data.getData();
+        int[] ids = new int[courseIdList.size()];
 
-        for(int i=0;i<idList.size();i++){
-            ids[i] = idList.get(i).getId();
+        for(int i = 0; i< courseIdList.size(); i++){
+            ids[i] = courseIdList.get(i).getId();
         }
-
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-        ICourseService courseService = (ICourseService) appContext.getBean("courseService");
 
         courseService.deleteCourseBatch(ids);
         map.put("status","success");
@@ -212,10 +214,10 @@ public class CourseController {
     /**
      * 接收json中的课程id,实现批量删除
      */
-    static class ID{
+    static class CourseID {
         private int id;
 
-        public ID(){super();}
+        public CourseID(){super();}
 
         public int getId() {
             return id;

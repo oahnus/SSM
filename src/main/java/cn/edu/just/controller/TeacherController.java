@@ -6,6 +6,8 @@ import cn.edu.just.service.ITeacherService;
 import cn.edu.just.util.ApplicationContextConfig;
 import cn.edu.just.util.ExcelReader;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -24,20 +26,19 @@ import java.util.Map;
 @Controller
 @RequestMapping("/teacher")
 public class TeacherController {
+    private Logger logger = LoggerFactory.getLogger(TeacherController.class);
 
-//    private static Log log = LogFactory.getLog(TeacherController.class);
+    ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
+    ITeacherService teacherService = (ITeacherService) appContext.getBean("teacherService");
+
     /**
      * 获取学院信息，从人数较少的教师表中获取
      * @return 结果信息,包含学院列表
      */
     @ResponseBody
-    @RequestMapping(value = "/depart",method = RequestMethod.GET)
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=depart"})
     public Map getDeparts() {
         Map<String,Object> map = new HashMap<>();
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-
-        ITeacherService teacherService = (ITeacherService) appContext.getBean("teacherService");
-
         List<String> departList = teacherService.getDepart();
 
         List<Depart> departs = new ArrayList<>();
@@ -58,13 +59,9 @@ public class TeacherController {
      * @return 结果信息,包含专业列表
      */
     @ResponseBody
-    @RequestMapping(value = "/profession",method = RequestMethod.GET)
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = "method=profession")
     public Map getProfessions() {
         Map<String,Object> map = new HashMap<>();
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-
-        ITeacherService teacherService = (ITeacherService) appContext.getBean("teacherService");
-
         List<String> professionList = teacherService.getProfession();
 
         List<Profession> professions = new ArrayList<>();
@@ -82,16 +79,36 @@ public class TeacherController {
     }
 
     /**
+     * 获取教师信息
+     * @param username 用户名
+     * @return 结果信息
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{username}/",method = RequestMethod.POST,headers = {"method=get"})
+    public Map getTeacherInfo(@PathVariable String username){
+        Map<String,Object> map = new HashMap<>();
+
+        Teacher teacher = teacherService.getTeacherInfo(username);
+        if(teacher != null){
+            map.put("status","success");
+            map.put("info","获取信息成功");
+        }else{
+            map.put("status","error");
+            map.put("info","获取信息失败");
+        }
+        map.put("data",teacher);
+
+        return map;
+    }
+
+    /**
      * 获取教师信息的列表
      * @return 结果信息
      */
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=get"})
     @ResponseBody
-    public Map list(@RequestParam(value = "depart",required = false) String depart){
+    public Map getTeacherList(@RequestParam(value = "depart",required = false) String depart){
         Map<String,Object> map = new HashMap<>();
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-
-        ITeacherService teacherService = (ITeacherService) appContext.getBean("teacherService");
         List<Teacher> teacherList = teacherService.getTeacherList(depart);
 
         map.put("status","success");
@@ -107,7 +124,7 @@ public class TeacherController {
      * @return 刚添加的教师列表
      */
     @ResponseBody
-    @RequestMapping(value = "/insert",method = RequestMethod.POST)
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=post"})
     public Map insert(@RequestBody MultipartFile excelFile, HttpServletRequest request) throws IOException {
         String path = request.getSession().getServletContext().getRealPath("/WEB-INF/upload/temp/");
 
@@ -116,9 +133,6 @@ public class TeacherController {
         if(!testFile.exists()) testFile.mkdirs();
 
         Map<String,Object> map = new HashMap<>();
-
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-        ITeacherService teacherService = (ITeacherService) appContext.getBean("teacherService");
 
         if(!excelFile.isEmpty()) {
             // 获取文件后缀
@@ -156,19 +170,16 @@ public class TeacherController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/delete")
-    public Map delete(@RequestBody Data<ID> data){
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=delete"})
+    public Map delete(@RequestBody Data<TeacherID> data){
         Map<String,Object> map = new HashMap<>();
 
-        List<ID> idList = data.getData();
-        int[] ids = new int[idList.size()];
+        List<TeacherID> teacherIdList = data.getData();
+        int[] ids = new int[teacherIdList.size()];
 
-        for(int i=0;i<idList.size();i++){
-            ids[i] = idList.get(i).getId();
+        for(int i = 0; i< teacherIdList.size(); i++){
+            ids[i] = teacherIdList.get(i).getId();
         }
-
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-        ITeacherService teacherService = (ITeacherService) appContext.getBean("teacherService");
 
         teacherService.deleteTeacherBatch(ids);
 
@@ -211,10 +222,10 @@ public class TeacherController {
     /**
      * 接收json中的教师id,实现批量删除
      */
-    static class ID{
+    static class TeacherID {
         private int id;
 
-        public ID(){super();}
+        public TeacherID(){super();}
 
         public int getId() {
             return id;

@@ -14,6 +14,11 @@
         SELECT id,name,contact,address FROM company
     </select>
 
+    <!--获取公司列表-->
+    <select id="getCompanyInfo" parameterType="java.lang.String" resultType="cn.edu.just.pojo.Company">
+        SELECT id,name,contact,address FROM company WHERE name=#{_parameter}
+    </select>
+
     <!--根据id检索数据-->
     <select id="queryById" parameterType="java.lang.Integer" resultType="cn.edu.just.pojo.Company">
         SELECT id,name,contact,address FROM company where id = #{_parameter}

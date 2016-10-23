@@ -8,6 +8,7 @@ import java.util.List;
 public interface ITeacherService {
     boolean verifyUser(String username,String password);
     List<Teacher> getTeacherList(String depart);
+    Teacher getTeacherInfo(String username);
     void insertTeacherBatch(List<Teacher> list);
     void deleteTeacherBatch(int[] ids);
     void modifyPwd(String username,String oldPassword,String newPassword);

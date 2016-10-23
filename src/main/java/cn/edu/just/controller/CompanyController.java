@@ -31,6 +31,8 @@ import java.util.Map;
 public class CompanyController {
 
     private Logger logger = LoggerFactory.getLogger(CompanyController.class);
+    ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
+    ICompanyService companyService = (ICompanyService) appContext.getBean("companyService");
 
     /**
      * 获取所有公司的信息
@@ -40,9 +42,6 @@ public class CompanyController {
     @ResponseBody
     public Map getCompanyList(HttpServletRequest request){
         Map<String,Object> map = new HashMap<>();
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-
-        ICompanyService companyService = (ICompanyService) appContext.getBean("companyService");
 
         List<Company> companyList = companyService.getCompanyList();
 
@@ -50,6 +49,28 @@ public class CompanyController {
         map.put("info","获取公司信息成功");
         map.put("data",companyList);
 
+        return map;
+    }
+
+    /**
+     * 根据用户名获取公司信息
+     * @param username 用户名(公司名)
+     * @return 结果信息
+     */
+    @ResponseBody
+    @RequestMapping(value = "/{username}/",method = RequestMethod.POST,headers = {"method=get"})
+    public Map getCompanyInfo(@PathVariable String username){
+        Map<String,Object> map = new HashMap<>();
+
+        Company company = companyService.getCompanyInfo(username);
+        if(company != null) {
+            map.put("status", "success");
+            map.put("info","获取公司信息成功");
+        }else{
+            map.put("status", "error");
+            map.put("info","获取信息失败");
+        }
+        map.put("data", company);
         return map;
     }
 
@@ -68,9 +89,6 @@ public class CompanyController {
         if(!testFile.exists()) testFile.mkdirs();
 
         Map<String,Object> map = new HashMap<>();
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-
-        ICompanyService companyService = (ICompanyService) appContext.getBean("companyService");
 
         if(!excelFile.isEmpty()) {
             // 获取文件后缀
@@ -114,9 +132,6 @@ public class CompanyController {
         int[] ids = new int[companyIdList.size()];
 
         Map<String,Object> map = new HashMap<>();
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-
-        ICompanyService companyService = (ICompanyService) appContext.getBean("companyService");
 
         companyService.deleteCompanyBatch(ids);
 

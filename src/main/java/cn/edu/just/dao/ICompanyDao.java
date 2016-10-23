@@ -11,6 +11,7 @@ import java.util.Map;
 public interface ICompanyDao {
     Company verifyUser(Map<String, Object> map);
     List<Company> getCompanyList();
+    Company getCompanyInfo(String username);
     void insertCompanyBatch(List<Company> list);
     void deleteCompanyBatch(List<Integer> list);
     void modifyPwd(Map<String, Object> paramMap);

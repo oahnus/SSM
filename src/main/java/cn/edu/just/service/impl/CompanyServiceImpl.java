@@ -48,6 +48,16 @@ public class CompanyServiceImpl implements ICompanyService{
         return this.companyDao.getCompanyList();
     }
 
+    /**
+     *
+     * @param username
+     * @return
+     */
+    @Override
+    public Company getCompanyInfo(String username) {
+        return companyDao.getCompanyInfo(username);
+    }
+
 
     @Override
     public void insertCompanyBatch(List<Company> list) {
