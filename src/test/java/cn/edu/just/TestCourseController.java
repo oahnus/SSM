@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -48,5 +49,15 @@ public class TestCourseController {
                 .param("memo","memo")
                 .param("addition","123")
                 .header("method","post")).andDo(print());
+    }
+
+    @Test
+    public void testGetCourse() throws Exception {
+        String json = "{\"username\":\"10048\",\"actor\":\"3\"}";
+
+        mockMvc.perform(post("/course/")
+                .characterEncoding("UTF-8").header("method","get")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)).andDo(print());
     }
 }

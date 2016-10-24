@@ -24,7 +24,7 @@ import java.util.Map;
 
 @CrossOrigin(maxAge = 3600)
 @Controller
-@RequestMapping("/teacher")
+@RequestMapping("/teacher/")
 public class TeacherController {
     private Logger logger = LoggerFactory.getLogger(TeacherController.class);
 

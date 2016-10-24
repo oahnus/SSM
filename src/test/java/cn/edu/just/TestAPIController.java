@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -32,5 +33,15 @@ public class TestAPIController {
     @Test
     public void testGetApi() throws Exception {
         mockMvc.perform(post("/")).andDo(print());
+    }
+
+    @Test
+    public void testRedirect() throws Exception {
+        String json = "{\"data\":\"123\",\"method\":\"get\"}";
+        mockMvc.perform(post("/1/show")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8"))
+                .andDo(print());
     }
 }

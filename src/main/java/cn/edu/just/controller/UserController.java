@@ -49,7 +49,7 @@ public class UserController {
      * @param response 设置cookie
      * @return 结果信息,验证成果status success,失败 status error
      */
-    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=verify"})
+    @RequestMapping(value = "/1",method = RequestMethod.POST,headers = {"method=verify"})
     @ResponseBody
     private Map verifyUser(@RequestBody Data<User> data,
                                  HttpServletRequest request,

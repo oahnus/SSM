@@ -30,8 +30,8 @@ public class CourseController {
     private Logger logger = LoggerFactory.getLogger(CourseController.class);
     // 服务器上允许上传,下载的文件类型
     public static final String[] EXTENSION = {".doc",".docx",".pdf"};
-    ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-    ICourseService courseService = (ICourseService) appContext.getBean("courseService");
+    private ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
+    private ICourseService courseService = (ICourseService) appContext.getBean("courseService");
 
     /**
      * 查询课程信息,公司获取本公司下的课程,教师获取本人教授的课程,学生获取本专业的课程
@@ -39,12 +39,20 @@ public class CourseController {
      */
     @ResponseBody
     @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=get"})
-    public Map getCourseList(@RequestParam("username") String username,
-                                            @RequestParam("actor") int actor,
-                                            @RequestParam(value = "courseName",required = false) String courseName,
-                                            @RequestParam(value = "teacherName",required = false) String teacherName,
-                                            @RequestParam(value = "companyName",required = false) String companyName){
+    public Map getCourseList(@RequestBody Map<String,String> paramMap){
         Map<String,Object> map = new HashMap<>();
+
+        // TODO 异常捕获
+        String username= paramMap.get("username");
+        Integer actor = Integer.valueOf(paramMap.get("actor"));
+        String courseName=paramMap.get("courseName");
+        String teacherName=paramMap.get("teacherName");
+        String companyName=paramMap.get("companyName");
+
+        logger.info(courseName);
+        logger.info(teacherName);
+        logger.info(companyName);
+
         List<Course> courseList = courseService.getCourses(username,actor,courseName,teacherName,companyName);
 
         map.put("status","success");
@@ -80,12 +88,6 @@ public class CourseController {
         String company = request.getParameter("company");
         String memo = request.getParameter("memo");
 
-        logger.info(addition.getOriginalFilename());
-        logger.info(name);
-        logger.info(profession);
-        logger.info(company);
-        logger.info(teacher);
-
         // 将课程信息封装在Course对象中
         Course course = new Course();
         course.setName(name);
@@ -116,8 +118,6 @@ public class CourseController {
             String url = new String(request.getRequestURL());
             url = url.substring(0,url.lastIndexOf('/'))+"/download/"+id;
 
-            logger.info(url);
-
             // 将url保存到数据库
             courseService.updateAdditionUrl(url,id);
 
@@ -146,6 +146,7 @@ public class CourseController {
 
         boolean isFindFile = false;
 
+        // TODO 重写下载文件的方式
         // 测试文件是否存在
         for(int i=0;i<EXTENSION.length;i++){
             String name = filename+EXTENSION[i];
@@ -159,6 +160,7 @@ public class CourseController {
 
         File downloadFile = new File(path, filename);
         if (isFindFile) {
+            // TODO 将异常抛出,在ExceptionAdvice中处理
             try {
                 response.setContentType("multipart/form-data");
                 response.addHeader("Content-Disposition",

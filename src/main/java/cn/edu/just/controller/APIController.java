@@ -1,5 +1,7 @@
 package cn.edu.just.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,8 @@ import java.io.*;
 @RequestMapping("/")
 @CrossOrigin(maxAge = 3600)
 public class APIController {
+
+    private Logger logger = LoggerFactory.getLogger(APIController.class);
 
     @RequestMapping
     @ResponseBody

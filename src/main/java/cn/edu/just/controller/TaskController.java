@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +27,8 @@ import java.util.Date;
 public class TaskController {
     // 定义一个字符串常量数组，存放上传文件的后缀名,用于在下载文件时从服务器中搜索文件
     public static final String[] EXTENSION = {".doc",".docx",".pdf"};
-
+    private ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
+    private ITaskService taskService = (ITaskService) appContext.getBean("taskService");
 
     /**
      * 根据课程id获取该课程下的所有任务信息
@@ -36,11 +36,9 @@ public class TaskController {
      * @return 结果信息
      */
     @ResponseBody
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=get"})
     public Map getTaskListByCourseId(@RequestParam("courseId") Integer courseId){
         Map<String,Object> map = new HashMap<>();
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-        ITaskService taskService = (ITaskService) appContext.getBean("taskService");
 
         if(courseId !=null) {
             List<Task> taskList = taskService.getTaskList(courseId);
@@ -62,7 +60,7 @@ public class TaskController {
      * @return 结果信息
      */
     @ResponseBody
-    @RequestMapping(value = "/release",method = RequestMethod.POST)
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=post"})
     public Map releaseTask(@RequestParam(value = "content",required = false) MultipartFile content, HttpServletRequest request) throws IOException {
         // 获取任务文件的保存路径
         String path = request.getSession().getServletContext().getRealPath("/WEB-INF/upload/task/");
@@ -90,8 +88,6 @@ public class TaskController {
 
         // 将任务信息插入到数据库中
         // 保存任务信息到数据库后，获取记录的id，将任务内容的文件名修改为id，再将路径信息更新到数据库中
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-        ITaskService taskService = (ITaskService) appContext.getBean("taskService");
 
         Integer id = taskService.queryByNameAndCourseId(name,courseId);
         if(id == null){
@@ -114,13 +110,10 @@ public class TaskController {
             String url = new String(request.getRequestURL());
             url = url.substring(0, url.lastIndexOf('/')) + "/download/" + id;
 
-
-System.out.println(url);
             task = new Task();
             task.setId(id);
             task.setContent(url);
             taskService.updateTask(task);
-
 
             map.put("status", "success");
             map.put("info", "发布成功");
@@ -194,14 +187,11 @@ System.out.println(url);
      * @return 结果信息
      */
     @ResponseBody
-    @RequestMapping(value = "/delete",method = RequestMethod.POST)
-    public Map deleteTaskBatch(@RequestBody Data<ID> data){
+    @RequestMapping(value = "/",method = RequestMethod.POST,headers = {"method=delete"})
+    public Map deleteTaskBatch(@RequestBody Data<TaskID> data){
         Map<String,Object> map = new HashMap<>();
-        List<ID> idList = data.getData();
-        int[] ids = new int[idList.size()];
-
-        ApplicationContext appContext = ApplicationContextConfig.getApplicationContext();
-        ITaskService taskService = (ITaskService) appContext.getBean("taskService");
+        List<TaskID> taskIdList = data.getData();
+        int[] ids = new int[taskIdList.size()];
 
         taskService.deleteTaskBatchByTaskId(ids);
 
@@ -212,12 +202,12 @@ System.out.println(url);
     }
 
     /**
-     * 接收json中的课程id,实现批量删除
+     * 接收json中的任务id,实现批量删除
      */
-    static class ID{
+    static class TaskID {
         private int id;
 
-        public ID(){super();}
+        public TaskID(){super();}
 
         public int getId() {
             return id;

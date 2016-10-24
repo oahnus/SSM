@@ -25,6 +25,7 @@ public class ExceptionAdvice {
     private Map<String,Object> map;
 
 //    NoHandlerFoundException
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoHandlerFoundException.class)
     public Map handleNoHandlerFoundException(Exception e) {
         map = new HashMap<>();
@@ -33,6 +34,7 @@ public class ExceptionAdvice {
         return map;
     }
 
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public Map handleHttpRequestMethodNotSupportedException(Exception e) {
         map = new HashMap<>();
